@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Absensi TQS 05 - Absensi TQS-KHS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --accent: #4cc9f0;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+            --success: #38b000;
+            --warning: #ffaa00;
+            --danger: #ef233c;
+            --hadir: #d4edda;
+            --hadir-text: #155724;
+            --izin: #fff3cd;
+            --izin-text: #856404;
+            --sakit: #ffe8d1;
+            --sakit-text: #721c24;
+            --alpa: #f8d7da;
+            --alpa-text: #721c24;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f5f7fa;
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        /* Sidebar (sama dengan dashboard) */
+        .sidebar {
+            width: 250px;
+            background-color: white;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+            height: 100vh;
+            position: fixed;
+        }
+        .sidebar-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .sidebar-header h2 {
+            color: var(--primary);
+            font-size: 1.3rem;
+        }
+        
+        .sidebar-menu {
+            padding: 1rem 0;
+        }
+        
+        .menu-item {
+            padding: 0.8rem 1.5rem;
+            display: flex;
+            align-items: center;
+            color: var(--dark);
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        
+        .menu-item:hover {
+            background-color: rgba(67, 97, 238, 0.1);
+            color: var(--primary);
+        }
+        
+        .menu-item.active {
+            background-color: rgba(67, 97, 238, 0.1);
+            color: var(--primary);
+            border-left: 4px solid var(--primary);
+        }
+        
+        .menu-item i {
+            margin-right: 0.8rem;
+            font-size: 1.1rem;
+        }
+        
+        
+        /* Main Content */
+        .main-content {
+            margin-left: 250px;
+            width: calc(100% - 250px);
+            padding: 2rem;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        
+        .header h1 {
+            color: var(--dark);
+            font-size: 1.8rem;
+        }
+        
+        /* Absensi Container */
+        .absensi-container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .absensi-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .absensi-title {
+            font-size: 1.3rem;
+            color: var(--dark);
+        }
+        
+        .absensi-controls {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .date-picker {
+            padding: 0.6rem;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        /* Session Tabs */
+        .session-tabs {
+            display: flex;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .session-tab {
+            padding: 0.8rem 1.5rem;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            font-weight: 500;
+            color: var(--gray);
+            transition: all 0.3s;
+        }
+        
+        .session-tab:hover {
+            color: var(--primary);
+        }
+        
+        .session-tab.active {
+            color: var(--primary);
+            border-bottom: 3px solid var(--primary);
+        }
+        
+        /* Absensi Table */
+        .absensi-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1.5rem;
+        }
+        
+        .absensi-table th {
+            background-color: #f8f9fa;
+            padding: 0.8rem 1rem;
+            text-align: left;
+            font-weight: 500;
+            color: var(--gray);
+        }
+        
+        .absensi-table td {
+            padding: 0.8rem 1rem;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .absensi-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .status-select {
+            padding: 0.6rem;
+            border-radius: 6px;
+            border: 1px solid #ced4da;
+            font-family: 'Poppins', sans-serif;
+            width: 100%;
+            cursor: pointer;
+        }
+        
+        .status-hadir {
+            background-color: var(--hadir);
+            color: var(--hadir-text);
+        }
+        
+        .status-izin {
+            background-color: var(--izin);
+            color: var(--izin-text);
+        }
+        
+        .status-sakit {
+            background-color: var(--sakit);
+            color: var(--sakit-text);
+        }
+        
+        .status-alpa {
+            background-color: var(--alpa);
+            color: var(--alpa-text);
+        }
+        
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+        
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--secondary);
+        }
+        
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid var(--gray);
+            color: var(--gray);
+        }
+        
+        .btn-outline:hover {
+            background-color: #f8f9fa;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 80px;
+            }
+            
+            .main-content {
+                margin-left: 80px;
+                width: calc(100% - 80px);
+            }
+            
+            .absensi-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            
+            .session-tabs {
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+            
+            .absensi-table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar (sama dengan dashboard) -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h2>Absensi TQS-KHS</h2>
+        </div>
+        
+        <div class="sidebar-menu">
+            <a href="dashboard.html" class="menu-item">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="absensi-tqs.html" class="menu-item active">
+                <i class="fas fa-clipboard-list"></i>
+                <span>Absensi TQS 05</span>
+            </a>
+            <a href="absensi-khs.html" class="menu-item">
+                <i class="fas fa-clipboard-check"></i>
+                <span>Absensi KHS 01</span>
+            </a>
+            <a href="jurnal.html" class="menu-item">
+                <i class="fas fa-book"></i>
+                <span>Jurnal Kelas</span>
+            </a>
+            <a href="laporan.html" class="menu-item">
+                <i class="fas fa-chart-bar"></i>
+                <span>Laporan</span>
+            </a>
+            <a href="index.html" class="menu-item">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </a>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="header">
+            <h1>Absensi Kelas TQS 05</h1>
+            <div class="user-info">
+                <img src="https://via.placeholder.com/40" alt="User">
+                <span>Admin</span>
+            </div>
+        </div>
+        
+        <div class="absensi-container">
+            <div class="absensi-header">
+                <h2 class="absensi-title">Form Absensi</h2>
+                <div class="absensi-controls">
+                    <input type="date" class="date-picker" id="tanggalAbsensi">
+                </div>
+            </div>
+            
+            <div class="session-tabs">
+                <div class="session-tab active" data-session="1">06:15-07:00</div>
+                <div class="session-tab" data-session="2">08:45-09:30</div>
+                <div class="session-tab" data-session="3">10:00-10:45</div>
+                <div class="session-tab" data-session="4">10:45-11:30</div>
+                <div class="session-tab" data-session="5">12:30-13:15</div>
+            </div>
+            
+            <table class="absensi-table">
+                <thead>
+                    <tr>
+                        <th width="5%">No</th>
+                        <th width="35%">Nama Santri</th>
+                        <th width="25%">Status Kehadiran</th>
+                        <th width="35%">Keterangan</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>FUAD FIRDAUS</td>
+                        <td>
+                            <select class="status-select status-hadir">
+                                <option value="hadir" class="status-hadir">Hadir</option>
+                                <option value="alpa" class="status-alpa">Alpa</option>
+                                <option value="izin" class="status-izin">Izin</option>
+                                <option value="sakit" class="status-sakit">Sakit</option>
+                            </select>
+                        </td>
+                        <td><input type="text" class="status-select" placeholder="Keterangan"></td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>FAUZAN TAUFIQ</td>
+                        <td>
+                            <select class="status-select status-hadir">
+                                <option value="hadir" class="status-hadir">Hadir</option>
+                                <option value="alpa" class="status-alpa">Alpa</option>
+                                <option value="izin" class="status-izin">Izin</option>
+                                <option value="sakit" class="status-sakit">Sakit</option>
+                            </select>
+                        </td>
+                        <td><input type="text" class="status-select" placeholder="Keterangan"></td>
+                    </tr>
+                    <!-- Data santri lainnya -->
+                    <tr>
+                        <td>3</td>
+                        <td>JABIR</td>
+                        <td>
+                            <select class="status-select status-hadir">
+                                <option value="hadir" class="status-hadir">Hadir</option>
+                                <option value="alpa" class="status-alpa">Alpa</option>
+                                <option value="izin" class="status-izin">Izin</option>
+                                <option value="sakit" class="status-sakit">Sakit</option>
+                            </select>
+                        </td>
+                        <td><input type="text" class="status-select" placeholder="Keterangan"></td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>AFFAN AL FARINSY</td>
+                        <td>
+                            <select class="status-select status-hadir">
+                                <option value="hadir" class="status-hadir">Hadir</option>
+                                <option value="alpa" class="status-alpa">Alpa</option>
+                                <option value="izin" class="status-izin">Izin</option>
+                                <option value="sakit" class="status-sakit">Sakit</option>
+                            </select>
+                        </td>
+                        <td><input type="text" class="status-select" placeholder="Keterangan"></td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>AL HARITS</td>
+                        <td>
+                            <select class="status-select status-hadir">
+                                <option value="hadir" class="status-hadir">Hadir</option>
+                                <option value="alpa" class="status-alpa">Alpa</option>
+                                <option value="izin" class="status-izin">Izin</option>
+                                <option value="sakit" class="status-sakit">Sakit</option>
+                            </select>
+                        </td>
+                        <td><input type="text" class="status-select" placeholder="Keterangan"></td>
+                    </tr>
+                    <tr>
+                        <td>6</td>
+                        <td>AZMI AT TAMANNI</td>
+                        <td>
+                            <select class="status-select status-hadir">
+                                <option value="hadir" class="status-hadir">Hadir</option>
+                                <option value="alpa" class="status-alpa">Alpa</option>
+                                <option value="izin" class="status-izin">Izin</option>
+                                <option value="sakit" class="status-sakit">Sakit</option>
+                            </select>
+                        </td>
+                        <td><input type="text" class="status-select" placeholder="Keterangan"></td>
+                    </tr>
+                    <tr>
+                        <td>7</td>
+                        <td>MUHAMMAD ZUBAIR</td>
+                        <td>
+                            <select class="status-select status-hadir">
+                                <option value="hadir" class="status-hadir">Hadir</option>
+                                <option value="alpa" class="status-alpa">Alpa</option>
+                                <option value="izin" class="status-izin">Izin</option>
+                                <option value="sakit" class="status-sakit">Sakit</option>
+                            </select>
+                        </td>
+                        <td><input type="text" class="status-select" placeholder="Keterangan"></td>
+                    </tr>
+                    <tr>
+                        <td>8</td>
+                        <td>JUNDI ABDULLAH</td>
+                        <td>
+                            <select class="status-select status-hadir">
+                                <option value="hadir" class="status-hadir">Hadir</option>
+                                <option value="alpa" class="status-alpa">Alpa</option>
+                                <option value="izin" class="status-izin">Izin</option>
+                                <option value="sakit" class="status-sakit">Sakit</option>
+                            </select>
+                        </td>
+                        <td><input type="text" class="status-select" placeholder="Keterangan"></td>
+                    </tr>
+                    <tr>
+                        <td>9</td>
+                        <td>ABDUL HADI</td>
+                        <td>
+                            <select class="status-select status-hadir">
+                                <option value="hadir" class="status-hadir">Hadir</option>
+                                <option value="alpa" class="status-alpa">Alpa</option>
+                                <option value="izin" class="status-izin">Izin</option>
+                                <option value="sakit" class="status-sakit">Sakit</option>
+                            </select>
+                        </td>
+                        <td><input type="text" class="status-select" placeholder="Keterangan"></td>
+                    </tr>
+                    <tr>
+                        <td>10</td>
+                        <td>YAHYA BANJAR</td>
+                        <td>
+                            <select class="status-select status-hadir">
+                                <option value="hadir" class="status-hadir">Hadir</option>
+                                <option value="alpa" class="status-alpa">Alpa</option>
+                                <option value="izin" class="status-izin">Izin</option>
+                                <option value="sakit" class="status-sakit">Sakit</option>
+                            </select>
+                        </td>
+                        <td><input type="text" class="status-select" placeholder="Keterangan"></td>
+                    </tr>
+                    <tr>
+                        <td>11</td>
+                        <td>SUFYAN BIN AFIT</td>
+                        <td>
+                            <select class="status-select status-hadir">
+                                <option value="hadir" class="status-hadir">Hadir</option>
+                                <option value="alpa" class="status-alpa">Alpa</option>
+                                <option value="izin" class="status-izin">Izin</option>
+                                <option value="sakit" class="status-sakit">Sakit</option>
+                            </select>
+                        </td>
+                        <td><input type="text" class="status-select" placeholder="Keterangan"></td>
+                    </tr>
+                    <tr>
+                        <td>12</td>
+                        <td>FAZA UBAIDILLAH</td>
+                        <td>
+                            <select class="status-select status-hadir">
+                                <option value="hadir" class="status-hadir">Hadir</option>
+                                <option value="alpa" class="status-alpa">Alpa</option>
+                                <option value="izin" class="status-izin">Izin</option>
+                                <option value="sakit" class="status-sakit">Sakit</option>
+                            </select>
+                        </td>
+                        <td><input type="text" class="status-select" placeholder="Keterangan"></td>
+                    </tr>
+                    <tr>
+                        <td>13</td>
+                        <td>MUHAMMAD SIDOARJO</td>
+                        <td>
+                            <select class="status-select status-hadir">
+                                <option value="hadir" class="status-hadir">Hadir</option>
+                                <option value="alpa" class="status-alpa">Alpa</option>
+                                <option value="izin" class="status-izin">Izin</option>
+                                <option value="sakit" class="status-sakit">Sakit</option>
+                            </select>
+                        </td>
+                        <td><input type="text" class="status-select" placeholder="Keterangan"></td>
+                    </tr>
+                    <!-- Lanjutkan untuk semua santri TQS -->
+                </tbody>
+            </table>
+            
+            <div class="action-buttons">
+                <button class="btn btn-outline">Reset</button>
+                <button class="btn btn-primary">Simpan Absensi</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Set tanggal default ke hari ini
+        document.getElementById('tanggalAbsensi').valueAsDate = new Date();
+        
+        // Session tab functionality
+        document.querySelectorAll('.session-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.session-tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                // Di sini bisa menambahkan logika untuk menampilkan data sesi yang dipilih
+            });
+        });
+        
+        // Status select change color
+        document.querySelectorAll('.status-select').forEach(select => {
+            select.addEventListener('change', function() {
+                // Remove all status classes
+                this.classList.remove('status-hadir', 'status-izin', 'status-sakit', 'status-alpa');
+                
+                // Add class based on selected value
+                if(this.value === 'hadir') {
+                    this.classList.add('status-hadir');
+                } else if(this.value === 'izin') {
+                    this.classList.add('status-izin');
+                } else if(this.value === 'sakit') {
+                    this.classList.add('status-sakit');
+                } else if(this.value === 'alpa') {
+                    this.classList.add('status-alpa');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

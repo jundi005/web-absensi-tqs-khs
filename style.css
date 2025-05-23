@@ -1,0 +1,21 @@
+/* Style dasar untuk semua halaman */
+body {
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+.sidebar {
+  display: flex !important;
+  visibility: visible !important;
+}
+
+body:not(.login-page) .sidebar { 
+  /* Tampilkan sidebar kecuali di halaman login */
+  transform: translateX(0) !important;
+}

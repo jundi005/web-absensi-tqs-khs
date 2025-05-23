@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jurnal Kelas - Absensi TQS-KHS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --accent: #4cc9f0;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+            --success: #38b000;
+            --warning: #ffaa00;
+            --danger: #ef233c;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f5f7fa;
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        /* Sidebar (sama dengan dashboard) */
+        .sidebar {
+            width: 250px;
+            background-color: white;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+            height: 100vh;
+            position: fixed;
+        }
+        .sidebar-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .sidebar-header h2 {
+            color: var(--primary);
+            font-size: 1.3rem;
+        }
+        
+        .sidebar-menu {
+            padding: 1rem 0;
+        }
+        
+        .menu-item {
+            padding: 0.8rem 1.5rem;
+            display: flex;
+            align-items: center;
+            color: var(--dark);
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        
+        .menu-item:hover {
+            background-color: rgba(67, 97, 238, 0.1);
+            color: var(--primary);
+        }
+        
+        .menu-item.active {
+            background-color: rgba(67, 97, 238, 0.1);
+            color: var(--primary);
+            border-left: 4px solid var(--primary);
+        }
+        
+        .menu-item i {
+            margin-right: 0.8rem;
+            font-size: 1.1rem;
+        }
+        
+        
+        /* Main Content */
+        .main-content {
+            margin-left: 250px;
+            width: calc(100% - 250px);
+            padding: 2rem;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        
+        .header h1 {
+            color: var(--dark);
+            font-size: 1.8rem;
+        }
+        
+        /* Jurnal Container */
+        .jurnal-container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .jurnal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .jurnal-title {
+            font-size: 1.3rem;
+            color: var(--dark);
+        }
+        
+        .jurnal-controls {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .date-picker {
+            padding: 0.6rem;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        /* Day Tabs */
+        .day-tabs {
+            display: flex;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .day-tab {
+            padding: 0.8rem 1.5rem;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            font-weight: 500;
+            color: var(--gray);
+            transition: all 0.3s;
+        }
+        
+        .day-tab:hover {
+            color: var(--primary);
+        }
+        
+        .day-tab.active {
+            color: var(--primary);
+            border-bottom: 3px solid var(--primary);
+        }
+        
+        /* Jadwal Items */
+        .jadwal-container {
+            display: none;
+        }
+        
+        .jadwal-container.active {
+            display: block;
+        }
+        
+        .jadwal-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .jadwal-waktu {
+            min-width: 120px;
+            font-weight: 500;
+        }
+        
+        .jadwal-materi {
+            flex: 1;
+        }
+        
+        .status-toggle {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .toggle-label {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 30px;
+        }
+        
+        .toggle-label input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+        
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .toggle-slider {
+            background-color: var(--success);
+        }
+        
+        input:checked + .toggle-slider:before {
+            transform: translateX(30px);
+        }
+        
+        .status-text {
+            min-width: 100px;
+        }
+        
+        /* Catatan Input */
+        .catatan-input {
+            width: 100%;
+            padding: 1rem;
+            border: 1px solid #ced4da;
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+            margin-top: 1.5rem;
+            min-height: 150px;
+            resize: vertical;
+        }
+        
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--secondary);
+        }
+        
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid var(--gray);
+            color: var(--gray);
+        }
+        
+        .btn-outline:hover {
+            background-color: #f8f9fa;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 80px;
+            }
+            
+            .main-content {
+                margin-left: 80px;
+                width: calc(100% - 80px);
+            }
+            
+            .jurnal-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            
+            .day-tabs {
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+            
+            .jadwal-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            
+            .status-toggle {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar (sama dengan dashboard) -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h2>Absensi TQS-KHS</h2>
+        </div>
+        
+        <div class="sidebar-menu">
+            <a href="dashboard.html" class="menu-item">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="absensi-tqs.html" class="menu-item">
+                <i class="fas fa-clipboard-list"></i>
+                <span>Absensi TQS 05</span>
+            </a>
+            <a href="absensi-khs.html" class="menu-item">
+                <i class="fas fa-clipboard-check"></i>
+                <span>Absensi KHS 01</span>
+            </a>
+            <a href="jurnal.html" class="menu-item active">
+                <i class="fas fa-book"></i>
+                <span>Jurnal Kelas</span>
+            </a>
+            <a href="laporan.html" class="menu-item">
+                <i class="fas fa-chart-bar"></i>
+                <span>Laporan</span>
+            </a>
+            <a href="index.html" class="menu-item">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </a>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="header">
+            <h1>Jurnal Kelas</h1>
+            <div class="user-info">
+                <img src="https://via.placeholder.com/40" alt="User">
+                <span>Admin</span>
+            </div>
+        </div>
+        
+        <div class="jurnal-container">
+            <div class="jurnal-header">
+                <h2 class="jurnal-title">Catatan Pembelajaran</h2>
+                <div class="jurnal-controls">
+                    <input type="date" class="date-picker" id="tanggalJurnal">
+                </div>
+            </div>
+            
+            <div class="day-tabs">
+                <div class="day-tab active" data-day="sabtu">Sabtu</div>
+                <div class="day-tab" data-day="ahad">Ahad</div>
+                <div class="day-tab" data-day="senin">Senin</div>
+                <div class="day-tab" data-day="selasa">Selasa</div>
+                <div class="day-tab" data-day="rabu">Rabu</div>
+                <div class="day-tab" data-day="kamis">Kamis</div>
+            </div>
+            
+            <!-- Jurnal Sabtu -->
+            <div class="jadwal-container active" id="jadwal-sabtu">
+                <div class="jadwal-item">
+                    <div class="jadwal-waktu">08:00-08:45</div>
+                    <div class="jadwal-materi">Ta'dzimussunnah</div>
+                    <div class="status-toggle">
+                        <span class="status-text">Tidak Masuk</span>
+                        <label class="toggle-label">
+                            <input type="checkbox">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="jadwal-item">
+                    <div class="jadwal-waktu">10:00-10:45</div>
+                    <div class="jadwal-materi">Shohih Bukhori</div>
+                    <div class="status-toggle">
+                        <span class="status-text">Tidak Masuk</span>
+                        <label class="toggle-label">
+                            <input type="checkbox">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+                
+                <textarea class="catatan-input" placeholder="Catatan pembelajaran hari ini..."></textarea>
+            </div>
+            
+            <!-- Jurnal Ahad -->
+            <div class="jadwal-container" id="jadwal-ahad">
+                <div class="jadwal-item">
+                    <div class="jadwal-waktu">06:30-07:00</div>
+                    <div class="jadwal-materi">Tafsir</div>
+                    <div class="status-toggle">
+                        <span class="status-text">Tidak Masuk</span>
+                        <label class="toggle-label">
+                            <input type="checkbox">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+                
+                <textarea class="catatan-input" placeholder="Catatan pembelajaran hari ini..."></textarea>
+            </div>
+            
+            <!-- Jurnal Senin -->
+            <div class="jadwal-container" id="jadwal-senin">
+                <div class="jadwal-item">
+                    <div class="jadwal-waktu">06:30-07:00</div>
+                    <div class="jadwal-materi">Mustholah</div>
+                    <div class="status-toggle">
+                        <span class="status-text">Tidak Masuk</span>
+                        <label class="toggle-label">
+                            <input type="checkbox">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="jadwal-item">
+                    <div class="jadwal-waktu">08:00-08:45</div>
+                    <div class="jadwal-materi">Ushul Iman</div>
+                    <div class="status-toggle">
+                        <span class="status-text">Tidak Masuk</span>
+                        <label class="toggle-label">
+                            <input type="checkbox">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="jadwal-item">
+                    <div class="jadwal-waktu">10:00-10:45</div>
+                    <div class="jadwal-materi">Al Muharror</div>
+                    <div class="status-toggle">
+                        <span class="status-text">Tidak Masuk</span>
+                        <label class="toggle-label">
+                            <input type="checkbox">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="jadwal-item">
+                    <div class="jadwal-waktu">10:45-11:30</div>
+                    <div class="jadwal-materi">Tadwinussunnah</div>
+                    <div class="status-toggle">
+                        <span class="status-text">Tidak Masuk</span>
+                        <label class="toggle-label">
+                            <input type="checkbox">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="jadwal-item">
+                    <div class="jadwal-waktu">12:30-13:15</div>
+                    <div class="jadwal-materi">Tajwid</div>
+                    <div class="status-toggle">
+                        <span class="status-text">Tidak Masuk</span>
+                        <label class="toggle-label">
+                            <input type="checkbox">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+                
+                <textarea class="catatan-input" placeholder="Catatan pembelajaran hari ini..."></textarea>
+            </div>
+            
+            <!-- Jurnal Selasa-Kamis (dengan pola yang sama) -->
+            
+            <div class="action-buttons">
+                <button class="btn btn-outline">Reset</button>
+                <button class="btn btn-primary">Simpan Jurnal</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Set tanggal default ke hari ini
+        document.getElementById('tanggalJurnal').valueAsDate = new Date();
+        
+        // Day tab functionality
+        document.querySelectorAll('.day-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                const day = this.getAttribute('data-day');
+                
+                document.querySelectorAll('.day-tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                
+                document.querySelectorAll('.jadwal-container').forEach(j => j.classList.remove('active'));
+                document.getElementById(`jadwal-${day}`).classList.add('active');
+            });
+        });
+        
+        // Toggle switch functionality
+        document.querySelectorAll('.toggle-label input').forEach(toggle => {
+            toggle.addEventListener('change', function() {
+                const statusText = this.closest('.status-toggle').querySelector('.status-text');
+                statusText.textContent = this.checked ? 'Masuk' : 'Tidak Masuk';
+            });
+        });
+    </script>
+</body>
+</html>
