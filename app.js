@@ -1,7 +1,7 @@
 // Fungsi untuk menyimpan data absensi ke Google Spreadsheet
 async function simpanAbsensi(data) {
     try {
-        const scriptUrl = 'https://script.google.com/macros/s/AKfycbwjkSIqm8CH-PRB3qu2HeeQfO-LeR3J1DLakVxq0WnXBADW4Bssl5TCPlDRQD6cUsZW/exec';
+        const scriptUrl = 'https://script.google.com/macros/s/AKfycbzYOK0qdK0BtcBC4H3GyWsKuALX8nZY1KHZzeenhdyvsNrPqPvS69gjlFZdthZGJ4aO/exec';
         
         const response = await fetch(scriptUrl, {
             method: 'POST',
@@ -30,7 +30,7 @@ async function simpanAbsensi(data) {
 // Fungsi untuk menyimpan jurnal ke Google Spreadsheet
 async function simpanJurnal(data) {
     try {
-        const scriptUrl = 'https://script.google.com/macros/s/AKfycbwjkSIqm8CH-PRB3qu2HeeQfO-LeR3J1DLakVxq0WnXBADW4Bssl5TCPlDRQD6cUsZW/exec';
+        const scriptUrl = 'https://script.google.com/macros/s/AKfycbzYOK0qdK0BtcBC4H3GyWsKuALX8nZY1KHZzeenhdyvsNrPqPvS69gjlFZdthZGJ4aO/exec';
         
         const response = await fetch(scriptUrl, {
             method: 'POST',
@@ -59,7 +59,7 @@ async function simpanJurnal(data) {
 // Fungsi untuk mengambil data laporan dari Google Spreadsheet
 async function ambilLaporan(filter) {
     try {
-        const scriptUrl = `https://script.google.com/macros/s/AKfycbwjkSIqm8CH-PRB3qu2HeeQfO-LeR3J1DLakVxq0WnXBADW4Bssl5TCPlDRQD6cUsZW/exec_LAPORAN?kelas=${filter.kelas}&bulan=${filter.bulan}&tahun=${filter.tahun}`;
+        const scriptUrl = `https://script.google.com/macros/s/AKfycbzYOK0qdK0BtcBC4H3GyWsKuALX8nZY1KHZzeenhdyvsNrPqPvS69gjlFZdthZGJ4aO/exec_LAPORAN?kelas=${filter.kelas}&bulan=${filter.bulan}&tahun=${filter.tahun}`;
         
         const response = await fetch(scriptUrl);
         const data = await response.json();
@@ -271,7 +271,7 @@ async function exportToExcel() {
             tahun: document.getElementById('tahunFilter').value
         };
         
-        const scriptUrl = `https://script.google.com/macros/s/AKfycbwjkSIqm8CH-PRB3qu2HeeQfO-LeR3J1DLakVxq0WnXBADW4Bssl5TCPlDRQD6cUsZW/exec_EXPORT?kelas=${filter.kelas}&bulan=${filter.bulan}&tahun=${filter.tahun}`;
+        const scriptUrl = `https://script.google.com/macros/s/AKfycbzYOK0qdK0BtcBC4H3GyWsKuALX8nZY1KHZzeenhdyvsNrPqPvS69gjlFZdthZGJ4aO/exec_EXPORT?kelas=${filter.kelas}&bulan=${filter.bulan}&tahun=${filter.tahun}`;
         
         const response = await fetch(scriptUrl);
         const blob = await response.blob();
